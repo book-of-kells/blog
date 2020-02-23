@@ -9,7 +9,6 @@ import mongoose from 'mongoose';
 import morgan from 'morgan';
 
 import ArticlesSchema from './models/Articles.js';
-// const ArticlesSchema = models.Articles;
 import router from './routes/index.js';
 
 const isProduction = process.env.NODE_ENV === 'production';
