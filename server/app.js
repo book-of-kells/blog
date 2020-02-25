@@ -19,12 +19,11 @@ mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/lightblog');
 mongoose.set('debug', true);
 
-
-app.use(router);
 app.use(cors());
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(router);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
     secret: 'LightBlog', 

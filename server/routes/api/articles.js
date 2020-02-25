@@ -94,5 +94,4 @@ articlesRouter.delete('/:id', (req, res, next) => {
     .catch(next);
 });
 
-// module.exports = articlesRouter;
 export default articlesRouter;
