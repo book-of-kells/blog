@@ -16,7 +16,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
 
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/lightblog');
+mongoose.connect('mongodb://localhost/lightblog', { useNewUrlParser: true });
 mongoose.set('debug', true);
 
 app.use(cors());

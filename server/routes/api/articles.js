@@ -5,8 +5,6 @@ const articlesRouter = express.Router();
 const Articles = mongoose.model('Articles');
 
 
-
-
 articlesRouter.post('/', (req, res, next) => {
   const { body } = req;
 
@@ -45,10 +43,6 @@ articlesRouter.get('/', (req, res, next) => {
     .sort({ createdAt: 'descending' })
     .then((articles) => res.json({ articles: articles.map(article => article.toJSON()) }))
     .catch((next) => {console.log(next)});
-    /**
-     *catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
-
-     */
 });
 
 articlesRouter.param('id', (req, res, next, id) => {
