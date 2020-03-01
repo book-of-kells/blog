@@ -15,7 +15,15 @@ class Form extends React.Component {
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-
+  /**
+   * Warning: componentWillReceiveProps has been renamed, and is not recommended for use. 
+   * See https://fb.me/react-unsafe-component-lifecycles for details.
+   * Move data fetching code or side effects to componentDidUpdate.
+   * If you're updating state whenever props change, 
+   *    refactor your code to use memoization techniques or 
+   *    move it to static getDerivedStateFromProps. 
+   * Learn more at: https://fb.me/react-derived-state} 
+   */
   componentWillReceiveProps(nextProps) {
     if(nextProps.articleToEdit) {
       this.setState({
