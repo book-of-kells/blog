@@ -3,18 +3,19 @@ import axios from 'axios';
 import moment from 'moment';
 import { connect } from 'react-redux';
 
-import { Form } from '../../components/Article';
-
+// import { Form } from '../../components/Article';
+import { Article, ArticleFormHeader } from '../../components/Article';
+/*
 class ArticleFormHeader extends React.PureComponent {
   render() {
     return (
       <div className="row pt-5">
-      <div className="col-12 col-lg-6 offset-lg-3">
-        <h1 className="text-center">LightBlog</h1>
+        <div className="col-12 col-lg-6 offset-lg-3">
+          <h1 className="text-center">LightBlog</h1>
+        </div>
+        <Form />
       </div>
-      <Form />
-    </div>
-    )   
+    )
   }
 }
 class Article extends React.PureComponent {
@@ -43,8 +44,10 @@ class Article extends React.PureComponent {
     )
   }
 }
+*/
 
 class Home extends React.Component {
+
   constructor(props) {
     super(props);
     this.handleDelete = this.handleDelete.bind(this);
@@ -54,13 +57,13 @@ class Home extends React.Component {
     axios('http://localhost:8000/api/articles')
       .then((res) => this.props.onLoad(res.data));
   }
-
-  handleEdit(article) { this.props.setEdit(article); }
+  handleEdit(article) { 
+    this.props.setEdit(article); 
+  }
   async handleDelete(id) { 
     await axios.delete(`http://localhost:8000/api/articles/${id}`);
     return this.props.onDelete(id); 
   }
-
   render() {
     return (
       <div className="container">
@@ -84,7 +87,7 @@ const mapStateToProps = (state) => ({
   articles: state.home.articles,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   onLoad: data => dispatch({ type: 'HOME_PAGE_LOADED', data }),
   onDelete: id => dispatch({ type: 'DELETE_ARTICLE', id }),
   setEdit: article => dispatch({ type: 'SET_EDIT', article }),

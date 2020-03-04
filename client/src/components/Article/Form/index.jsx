@@ -15,46 +15,42 @@ class Form extends React.Component {
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-  /**
-   * Warning: componentWillReceiveProps has been renamed, and is not recommended for use. 
-   * See https://fb.me/react-unsafe-component-lifecycles for details.
-   * Move data fetching code or side effects to componentDidUpdate.
-   * If you're updating state whenever props change, 
-   *    refactor your code to use memoization techniques or 
-   *    move it to static getDerivedStateFromProps. 
-   * Learn more at: https://fb.me/react-derived-state} 
-   */
-  componentWillReceiveProps(nextProps) {
-    if(nextProps.articleToEdit) {
+
+  componentDidUpdate(prevProps, prevState) {
+    if(this.props.articleToEdit && this.props.articleToEdit != prevProps.articleToEdit) {
       this.setState({
-        title: nextProps.articleToEdit.title,
-        body: nextProps.articleToEdit.body,
-        author: nextProps.articleToEdit.author,
+        title: this.props.articleToEdit.title,
+        body: this.props.articleToEdit.body,
+        author: this.props.articleToEdit.author,
       });
     }
   }
 
   handleSubmit(){
-    const { onSubmit, articleToEdit, onEdit } = this.props;
+    /* const { onSubmit, articleToEdit, onEdit } = this.props; */
     const { title, body, author } = this.state;
 
-    if(!articleToEdit) {
+    if(!this.props.articleToEdit) {
       return axios.post('http://localhost:8000/api/articles', {
         title,
         body,
         author,
       })
-        .then((res) => onSubmit(res.data))
+        .then((res) => this.props.onSubmit(res.data))
         .then(() => this.setState({ title: '', body: '', author: '' }));
     } else {
-      return axios.patch(`http://localhost:8000/api/articles/${articleToEdit._id}`, {
+      return axios.patch(`http://localhost:8000/api/articles/${this.props.articleToEdit._id}`, {
         title,
         body,
         author,
       })
-        .then((res) => onEdit(res.data))
+        .then((res) => this.props.onEdit(res.data))
         .then(() => this.setState({ title: '', body: '', author: '' }));
     }
+  }
+
+  componentWillUnmount() {
+    console.log('componentWillUnmount')
   }
 
   handleChangeField(key, event) {
@@ -64,41 +60,41 @@ class Form extends React.Component {
   }
 
   render() {
-    const { articleToEdit } = this.props;
-    const { title, body, author } = this.state;
-
     return (
       <div className="col-12 col-lg-6 offset-lg-3">
         <input
           onChange={(ev) => this.handleChangeField('title', ev)}
-          value={title}
+          value={this.state.title}
           className="form-control my-3"
           placeholder="Article Title"
         />
         <textarea
           onChange={(ev) => this.handleChangeField('body', ev)}
+          value={this.state.body}
           className="form-control my-3"
-          placeholder="Article Body"
-          value={body}>
+          placeholder="Article Body">
         </textarea>
         <input
           onChange={(ev) => this.handleChangeField('author', ev)}
-          value={author}
+          value={this.state.author}
           className="form-control my-3"
           placeholder="Article Author"
         />
-        <button onClick={this.handleSubmit} className="btn btn-primary float-right">{articleToEdit ? 'Update' : 'Submit'}</button>
+
+        <button onClick={this.handleSubmit} className="btn btn-primary float-right">
+          {this.props.articleToEdit ? 'Update' : 'Submit'}
+        </button>
       </div>
     )
   }
 }
 
-const mapDispatchToProps = dispatch => ({
-  onSubmit: data => dispatch({ type: 'SUBMIT_ARTICLE', data }),
-  onEdit: data => dispatch({ type: 'EDIT_ARTICLE', data }),
+const mapDispatchToProps = (dispatch) => ({
+  onSubmit: data => dispatch({ type: 'SUBMIT_CREATED_ARTICLE', data }),
+  onEdit: data => dispatch({ type: 'SUBMIT_EDITED_ARTICLE', data }),
 });
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   articleToEdit: state.home.articleToEdit,
 });
 
