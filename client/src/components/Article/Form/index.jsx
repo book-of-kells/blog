@@ -1,62 +1,61 @@
 import React from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
+import store from '../../../store';
 
+/**
+ * @props:
+ *    onSubmitCreated(data)
+ *    onSubmitEdited(data)
+ *    articleToEdit
+ * 
+ * @state:
+ *    title
+ *    body
+ *    author
+ */
 class Form extends React.Component {
   constructor(props) {
     super(props);
+    this.state = { title: '', body: '', author: '' }
 
-    this.state = {
-      title: '',
-      body: '',
-      author: '',
-    }
-
+    // bind() called on these methods since they are ?? (todo)
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  /** re-setting state when props change used to be handled by
+   * componentWillReceiveProps(nextProps) {
+   *   if(nextProps.articleToEdit != undefined) {
+   *     this.setState({ ...nextProps.articleToEdit })
+   *   }
+   * }
+   * ... but since componentWillReceiveProps is unsafe, changed it to 
+   */
   componentDidUpdate(prevProps, prevState) {
-    if(this.props.articleToEdit && this.props.articleToEdit != prevProps.articleToEdit) {
-      this.setState({
+    if(prevProps.articleToEdit == undefined && this.props.articleToEdit != undefined) {
+      this.setState({ 
         title: this.props.articleToEdit.title,
         body: this.props.articleToEdit.body,
-        author: this.props.articleToEdit.author,
-      });
+        author: this.props.articleToEdit.author
+      })
     }
   }
 
-  handleSubmit(){
-    /* const { onSubmit, articleToEdit, onEdit } = this.props; */
-    const { title, body, author } = this.state;
-
-    if(!this.props.articleToEdit) {
-      return axios.post('http://localhost:8000/api/articles', {
-        title,
-        body,
-        author,
-      })
-        .then((res) => this.props.onSubmit(res.data))
+  handleSubmit() {  
+    if(this.props.articleToEdit != undefined) {
+      axios.patch(`http://localhost:8000/api/articles/${this.props.articleToEdit._id}`, { ...this.state })
+        .then((res) => this.props.onSubmitEdited(res.data))  // this will 
         .then(() => this.setState({ title: '', body: '', author: '' }));
     } else {
-      return axios.patch(`http://localhost:8000/api/articles/${this.props.articleToEdit._id}`, {
-        title,
-        body,
-        author,
-      })
-        .then((res) => this.props.onEdit(res.data))
+      axios.post('http://localhost:8000/api/articles', { ...this.state })
+        .then((res) => this.props.onSubmitCreated(res.data))
         .then(() => this.setState({ title: '', body: '', author: '' }));
     }
-  }
-
-  componentWillUnmount() {
-    console.log('componentWillUnmount')
   }
 
   handleChangeField(key, event) {
-    this.setState({
-      [key]: event.target.value,
-    });
+    this.setState({ [key]: event.target.value })
   }
 
   render() {
@@ -89,13 +88,29 @@ class Form extends React.Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  onSubmit: data => dispatch({ type: 'SUBMIT_CREATED_ARTICLE', data }),
-  onEdit: data => dispatch({ type: 'SUBMIT_EDITED_ARTICLE', data }),
-});
-
+/**
+mapStateToProps
+@param state the DefaultRootState that contains the combined reducers' states under their names e.g. "home" for the home reducer's state
+@param ownProps? optional
+@returns object mapping the connected component's props as keys to values of the DefaultRootState
+  key: this (Home) component's props.articleToEdit 
+  value: the home reducer's state.articleToEdit 
+*/
 const mapStateToProps = (state) => ({
-  articleToEdit: state.home.articleToEdit,
+  articleToEdit: state.home.articleToEdit,  // maps the home reducer's state.articleToEdit to this (Form) component's props.articleToEdit
+})
+
+/**
+mapDispatchToProps
+@param dispatch Store function that takes an Action (object representing "what changed" with a mandatory 'type' key) and returns part of the home reducer's state
+@param ownProps? optional
+@returns mapping the connected component's prop functions as keys to values of dispatch functions that take Action parameters and return part of the home reducer's state
+  key: this (Form) component's CRUD functions (onSubmitCreated, onSubmitEdited)
+  value: the home reducer's dispatch actions/functions that take Action parameters and return home reducer's state 
+*/
+const mapDispatchToProps = (dispatch) => ({
+  onSubmitCreated: data => dispatch({ type: 'SUBMIT_CREATED_ARTICLE', data }), /* returns state `articles` => Home component props */
+  onSubmitEdited: data => dispatch({ type: 'SUBMIT_EDITED_ARTICLE', data }),    /* returns state `articles` => Home props, `articleToEdit` => Form props */
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Form);

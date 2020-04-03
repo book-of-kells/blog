@@ -16,6 +16,12 @@ export class ArticleFormHeader extends React.PureComponent {
   }
 }
 
+/**
+ * @props:
+ *    handleDelete(articleId)
+ *    handleEdit(article)
+ *    article
+ */
 export class Article extends React.PureComponent {
   render() {
     const { article, handleDelete, handleEdit } = this.props;
