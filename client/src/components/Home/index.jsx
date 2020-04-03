@@ -24,11 +24,8 @@ class Home extends React.PureComponent {
      * param argArray A list of arguments to be passed to the new function.
      */
     // bind(this: Function, thisArg: any, ...argArray: any[]): any;
-    console.log(this)
     this.handleDelete = this.handleDelete.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
-    console.log('after binding...')
-    console.log(this)
   }
 
   componentDidMount() {
