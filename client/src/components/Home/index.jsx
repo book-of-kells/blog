@@ -10,17 +10,34 @@ import { Article, ArticleFormHeader } from '../../components/Article';
  *    setEdit(article)
  *    articles
  */
-class Home extends React.PureComponent {  // React.PureComponent?
+class Home extends React.PureComponent {
 
   constructor(props) {
     super(props);
 
-    // bind() called on these methods since they are sent as props to child components and are called by the child components (?? todo is this right?)
+    // todo: bind() called on handleDelete and handleEdit because 
+    // they are both mapped to dispatch actions??
+    /**
+     * For a given function, creates a bound function that has the same body as the original function.
+     * The this object of the bound function is associated with the specified object, and has the specified initial parameters.
+     * param thisArg An object to which the this keyword can refer inside the new function.
+     * param argArray A list of arguments to be passed to the new function.
+     */
+    // bind(this: Function, thisArg: any, ...argArray: any[]): any;
+    console.log(this)
     this.handleDelete = this.handleDelete.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
+    console.log('after binding...')
+    console.log(this)
   }
 
   componentDidMount() {
+    /**
+     * this.props.onLoad will
+     * 1. dispatch 'HOME_PAGE_LOADED' action to home reducer, which will
+     * 2. set the articles home reducer state to all articles
+     * 3. map the home reducer state.articles to this Home component props.articles
+     */
     axios('http://localhost:8000/api/articles')
       .then((res) => this.props.onLoad(res.data));
   }

@@ -19,8 +19,8 @@ class Form extends React.Component {
     super(props);
     this.state = { title: '', body: '', author: '' }
 
-    // bind() called on these methods since they are ?? (todo)
-    this.handleChangeField = this.handleChangeField.bind(this);
+    // todo: bind() called on handleSubmit (and not handleChangeField) because
+    // it calls a method mapped to a dispatch action??
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -32,6 +32,37 @@ class Form extends React.Component {
    * }
    * ... but since componentWillReceiveProps is unsafe, changed it to 
    */
+
+  handleChangeField(key, event) {
+    this.setState({ [key]: event.target.value })
+  }
+
+  handleSubmit() {
+    /**
+     * this.props.onSubmitEdited will
+     * 1. dispatch 'SUBMIT_EDITED_ARTICLE' action to home reducer, which will
+     * 2. set the articles home reducer state to all articles, including the updated article
+     * 3. set the articleToEdit home reducer state to undefined
+     * 3. map the home reducer state.articles to the Home component props.articles
+     * 4. map the home reducer state.articleToEdit to this Form component props.articleToEdit
+     */
+    if(this.props.articleToEdit != undefined) {
+      axios.patch(`http://localhost:8000/api/articles/${this.props.articleToEdit._id}`, { ...this.state })
+        .then((res) => this.props.onSubmitEdited(res.data))
+        .then(() => this.setState({ title: '', body: '', author: '' }));
+    } else {
+    /**
+     * this.props.onSubmitCreated will
+     * 1. dispatch 'SUBMIT_CREATED_ARTICLE' action to home reducer, which will
+     * 2. set the articles home reducer state to all articles, including the newly created article
+     * 3. map the home reducer state.articles to the Home component props.articles
+     */
+      axios.post('http://localhost:8000/api/articles', { ...this.state })
+        .then((res) => this.props.onSubmitCreated(res.data))
+        .then(() => this.setState({ title: '', body: '', author: '' }));
+    }
+  }
+  
   componentDidUpdate(prevProps, prevState) {
     if(prevProps.articleToEdit == undefined && this.props.articleToEdit != undefined) {
       this.setState({ 
@@ -40,22 +71,6 @@ class Form extends React.Component {
         author: this.props.articleToEdit.author
       })
     }
-  }
-
-  handleSubmit() {  
-    if(this.props.articleToEdit != undefined) {
-      axios.patch(`http://localhost:8000/api/articles/${this.props.articleToEdit._id}`, { ...this.state })
-        .then((res) => this.props.onSubmitEdited(res.data))  // this will 
-        .then(() => this.setState({ title: '', body: '', author: '' }));
-    } else {
-      axios.post('http://localhost:8000/api/articles', { ...this.state })
-        .then((res) => this.props.onSubmitCreated(res.data))
-        .then(() => this.setState({ title: '', body: '', author: '' }));
-    }
-  }
-
-  handleChangeField(key, event) {
-    this.setState({ [key]: event.target.value })
   }
 
   render() {
