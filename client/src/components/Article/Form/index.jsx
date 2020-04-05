@@ -18,51 +18,56 @@ class Form extends React.Component {
   constructor(props) {
     super(props);
     this.state = { title: '', body: '', author: '' }
-
-    // todo: bind() called on handleSubmit (and not handleChangeField) because
-    // it calls a method mapped to a dispatch action??
+    /**
+     * handleSubmit.bind() creates an identical handleSubmit function
+     * that is bound to the specific Form component instance.
+     * Within the bound handleSubmit function, the `this` object can refer to properties of the 
+     * Form component instance, such as `this.props.onSubmitCreated` and `this.props.onSubmitEdited`.
+     */
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  /** re-setting state when props change used to be handled by
-   * componentWillReceiveProps(nextProps) {
-   *   if(nextProps.articleToEdit != undefined) {
-   *     this.setState({ ...nextProps.articleToEdit })
-   *   }
-   * }
-   * ... but since componentWillReceiveProps is unsafe, changed it to 
-   */
-
-  handleChangeField(key, event) {
-    this.setState({ [key]: event.target.value })
-  }
-
   handleSubmit() {
-    /**
-     * this.props.onSubmitEdited will
-     * 1. dispatch 'SUBMIT_EDITED_ARTICLE' action to home reducer, which will
-     * 2. set the articles home reducer state to all articles, including the updated article
-     * 3. set the articleToEdit home reducer state to undefined
-     * 3. map the home reducer state.articles to the Home component props.articles
-     * 4. map the home reducer state.articleToEdit to this Form component props.articleToEdit
+    /*
+     this.props.onSubmitEdited will
+     1. dispatch 'SUBMIT_EDITED_ARTICLE' action to home reducer, which will
+     2. set the home reducer state 
+        a. state.home.articles set to all articles, including the updated article
+        b. state.home.articleToEdit set to undefined
+     3. map the home reducer state to component props 
+        a. Home component props.articles set to state.home.articles 
+        b. Form component props.articleToEdit set to state.home.articleToEdit 
      */
     if(this.props.articleToEdit != undefined) {
       axios.patch(`http://localhost:8000/api/articles/${this.props.articleToEdit._id}`, { ...this.state })
         .then((res) => this.props.onSubmitEdited(res.data))
         .then(() => this.setState({ title: '', body: '', author: '' }));
     } else {
-    /**
-     * this.props.onSubmitCreated will
-     * 1. dispatch 'SUBMIT_CREATED_ARTICLE' action to home reducer, which will
-     * 2. set the articles home reducer state to all articles, including the newly created article
-     * 3. map the home reducer state.articles to the Home component props.articles
+    /*
+     this.props.onSubmitCreated will
+     1. dispatch 'SUBMIT_CREATED_ARTICLE' action to home reducer, which will
+     2. set the home reducer state to all articles, including the newly created article
+     3. map the home reducer state.articles to the Home component props.articles
      */
       axios.post('http://localhost:8000/api/articles', { ...this.state })
         .then((res) => this.props.onSubmitCreated(res.data))
         .then(() => this.setState({ title: '', body: '', author: '' }));
     }
   }
-  
+
+  handleChangeField(key, event) {
+    this.setState({ [key]: event.target.value })
+  }
+
+  /** Re-setting state when props change used to be handled by
+  * 
+  * componentWillReceiveProps(nextProps) {
+  *   if(nextProps.articleToEdit != undefined) {
+  *     this.setState({ ...nextProps.articleToEdit })
+  *   }
+  * }
+  * But since componentWillReceiveProps is unsafe, changed it to componentDidUpdate.
+  */
   componentDidUpdate(prevProps, prevState) {
     if(prevProps.articleToEdit == undefined && this.props.articleToEdit != undefined) {
       this.setState({ 
@@ -117,7 +122,7 @@ const mapStateToProps = (state) => ({
 
 /**
 mapDispatchToProps
-@param dispatch Store function that takes an Action (object representing "what changed" with a mandatory 'type' key) and returns part of the home reducer's state
+@param dispatch Store function that takes an Action (object representing "what changed" with a mandatory 'type' key) and returns home reducer's state
 @param ownProps? optional
 @returns mapping the connected component's prop functions as keys to values of dispatch functions that take Action parameters and return part of the home reducer's state
   key: this (Form) component's CRUD functions (onSubmitCreated, onSubmitEdited)

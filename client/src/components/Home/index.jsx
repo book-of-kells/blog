@@ -14,16 +14,12 @@ class Home extends React.PureComponent {
 
   constructor(props) {
     super(props);
-
-    // todo: bind() called on handleDelete and handleEdit because 
-    // they are both mapped to dispatch actions??
     /**
-     * For a given function, creates a bound function that has the same body as the original function.
-     * The this object of the bound function is associated with the specified object, and has the specified initial parameters.
-     * param thisArg An object to which the this keyword can refer inside the new function.
-     * param argArray A list of arguments to be passed to the new function.
+     * handleDelete.bind() and handleEdit.bind() create identical handleDelete and handleEdit functions
+     * that are bound to the specific Home component instance.
+     * Within the bound functions, the `this` object can refer to properties of the 
+     * Home component instance, such as `this.props.onDelete` and `this.props.setEdit`.
      */
-    // bind(this: Function, thisArg: any, ...argArray: any[]): any;
     this.handleDelete = this.handleDelete.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
   }
