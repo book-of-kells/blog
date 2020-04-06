@@ -1,6 +1,9 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { useOktaAuth } from '@okta/okta-react';
+
 import { Article, ArticleFormHeader } from '../../components/Article';
 
 /**
@@ -11,6 +14,25 @@ import { Article, ArticleFormHeader } from '../../components/Article';
  *    articles
  */
 const Home = (props) => {
+  const { authState, authService } = useOktaAuth();
+  /*
+  var authState;
+  var authService;
+  if(useOktaAuth() != undefined) {
+    const result = useOktaAuth()
+    authState = result.authState;
+    authService = result.authService;
+    console.log(`authService ${authService}`)
+  } */
+
+  if (authState && authState.isPending) { 
+    return <div>Loading...</div>;
+  }
+
+  const button = authState && authState.isAuthenticated && authService && authService.login ?
+    <button onClick={() => {authService.logout()}}>Logout</button> :
+    <button onClick={() => {authService.login()}}>Login</button>;
+
 
   useEffect(() => {
     /**
@@ -44,7 +66,7 @@ const Home = (props) => {
     props.onDelete(id);
   };
   
-  return (
+  return authState && authState.isAuthenticated ? (
     <div className="container">
       <ArticleFormHeader /> {/* This contains the Form component */}
       <div className="row pt-5">
@@ -57,6 +79,13 @@ const Home = (props) => {
           })
         }</div>
       </div>
+    </div>
+  ) : (
+    <div>
+      <Link to='/'>Home</Link><br/>
+      {/* <Link to='/login'>Login</Link><br/> */}
+      <Link to='/protected'>Protected</Link><br/>
+      {button}
     </div>
   );
 }
