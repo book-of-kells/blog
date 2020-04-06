@@ -34,7 +34,7 @@ class Form extends React.Component {
         a. state.home.articles set to all articles, including the updated article
         b. state.home.articleToEdit set to undefined
      3. map the home reducer state to component props 
-        a. Home component props.articles set to state.home.articles 
+        a. Home function's props.articles set to state.home.articles 
         b. Form component props.articleToEdit set to state.home.articleToEdit 
      */
     if(this.props.articleToEdit != undefined) {
@@ -46,7 +46,7 @@ class Form extends React.Component {
      this.props.onSubmitCreated will
      1. dispatch 'SUBMIT_CREATED_ARTICLE' action to home reducer, which will
      2. set the home reducer state to all articles, including the newly created article
-     3. map the home reducer state.articles to the Home component props.articles
+     3. map the home reducer state.articles to the Home function's props.articles
      */
       axios.post('http://localhost:8000/api/articles', { ...this.state })
         .then((res) => this.props.onSubmitCreated(res.data))
@@ -128,7 +128,7 @@ mapDispatchToProps
   value: the home reducer's dispatch actions/functions that take Action parameters and return home reducer's state 
 */
 const mapDispatchToProps = (dispatch) => ({
-  onSubmitCreated: data => dispatch({ type: 'SUBMIT_CREATED_ARTICLE', data }), /* returns state `articles` => Home component props */
+  onSubmitCreated: data => dispatch({ type: 'SUBMIT_CREATED_ARTICLE', data }), /* returns state `articles` => Home function's props */
   onSubmitEdited: data => dispatch({ type: 'SUBMIT_EDITED_ARTICLE', data }),    /* returns state `articles` => Home props, `articleToEdit` => Form props */
 });
 

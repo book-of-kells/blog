@@ -10,7 +10,6 @@ import { Article, ArticleFormHeader } from '../../components/Article';
  *    setEdit(article)
  *    articles
  */
-
 const Home = (props) => {
 
   useEffect(() => {
@@ -32,7 +31,7 @@ const Home = (props) => {
      * 3. map the home reducer state.articleToEdit to the Form component props.articleToEdit
      */
     props.setEdit(article)
-  }
+  };
   
   const handleDelete = async (id) => { 
     /**
@@ -43,23 +42,23 @@ const Home = (props) => {
      */
     await axios.delete(`http://localhost:8000/api/articles/${id}`);
     props.onDelete(id);
-  }
+  };
   
-    return (
-      <div className="container">
-        <ArticleFormHeader /> {/* This contains the Form component */}
-        <div className="row pt-5">
-          <div className="col-12 col-lg-6 offset-lg-3">{
-            props.articles.map((article) => {
-              return <Article key={article._id} 
-                              article={article} 
-                              handleDelete={handleDelete} 
-                              handleEdit={handleEdit} />
-            })
-          }</div>
-        </div>
+  return (
+    <div className="container">
+      <ArticleFormHeader /> {/* This contains the Form component */}
+      <div className="row pt-5">
+        <div className="col-12 col-lg-6 offset-lg-3">{
+          props.articles.map((article) => {
+            return <Article key={article._id} 
+                            article={article} 
+                            handleDelete={handleDelete} 
+                            handleEdit={handleEdit} />
+          })
+        }</div>
       </div>
-    );
+    </div>
+  );
 }
 
 /**
