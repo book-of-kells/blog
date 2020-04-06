@@ -15,21 +15,12 @@ import { Article, ArticleFormHeader } from '../../components/Article';
  */
 const Home = (props) => {
   const { authState, authService } = useOktaAuth();
-  /*
-  var authState;
-  var authService;
-  if(useOktaAuth() != undefined) {
-    const result = useOktaAuth()
-    authState = result.authState;
-    authService = result.authService;
-    console.log(`authService ${authService}`)
-  } */
 
-  if (authState && authState.isPending) { 
+  if (authState.isPending) { 
     return <div>Loading...</div>;
   }
 
-  const button = authState && authState.isAuthenticated && authService && authService.login ?
+  const button = authState.isAuthenticated ?
     <button onClick={() => {authService.logout()}}>Logout</button> :
     <button onClick={() => {authService.login()}}>Login</button>;
 
@@ -66,7 +57,7 @@ const Home = (props) => {
     props.onDelete(id);
   };
   
-  return authState && authState.isAuthenticated ? (
+  return authState.isAuthenticated ? (
     <div className="container">
       <ArticleFormHeader /> {/* This contains the Form component */}
       <div className="row pt-5">
