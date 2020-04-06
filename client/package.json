@@ -31,6 +31,8 @@
     "webpack-dev-server": "^3.10.3"
   },
   "dependencies": {
+    "@okta/okta-auth-js": "^3.0.1",
+    "@okta/okta-react": "^3.0.0",
     "axios": "^0.19.2",
     "babel-polyfill": "^6.26.0",
     "bootstrap": "^4.4.1",
