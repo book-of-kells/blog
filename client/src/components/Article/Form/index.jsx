@@ -28,7 +28,7 @@ function usePrevious(value) {
  *    body
  *    author
  */
-function Form(props) {
+const Form = (props) => {
   const [formFields, setFormFields] = useState({ title: '', body: '', author: '' });
   // Get the previous value (was passed into hook on last render)
   const prevArticleToEdit = usePrevious(props.articleToEdit);
