@@ -3,8 +3,7 @@ import moment from 'moment';
 
 import Form from './Form';
 
-export class ArticleFormHeader extends React.PureComponent {
-  render() {
+export const ArticleFormHeader = (props) => {
     return (
       <div className="row pt-5">
         <div className="col-12 col-lg-6 offset-lg-3">
@@ -13,7 +12,6 @@ export class ArticleFormHeader extends React.PureComponent {
         <Form />
       </div>
     )
-  }
 }
 
 /**
