@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import { Article, ArticleFormHeader } from '../../components/Article';
@@ -10,69 +10,56 @@ import { Article, ArticleFormHeader } from '../../components/Article';
  *    setEdit(article)
  *    articles
  */
-class Home extends React.PureComponent {
 
-  constructor(props) {
-    super(props);
-    /**
-     * handleDelete.bind() and handleEdit.bind() create identical handleDelete and handleEdit functions
-     * that are bound to the specific Home component instance.
-     * Within the bound functions, the `this` object can refer to properties of the 
-     * Home component instance, such as `this.props.onDelete` and `this.props.setEdit`.
-     */
-    this.handleDelete = this.handleDelete.bind(this);
-    this.handleEdit = this.handleEdit.bind(this);
-  }
+const Home = (props) => {
 
-  componentDidMount() {
+  useEffect(() => {
     /**
-     * this.props.onLoad will
+     * props.onLoad will
      * 1. dispatch 'HOME_PAGE_LOADED' action to home reducer, which will
      * 2. set the articles home reducer state to all articles
-     * 3. map the home reducer state.articles to this Home component props.articles
+     * 3. map the home reducer state.articles to Home function's props.articles
      */
     axios('http://localhost:8000/api/articles')
-      .then((res) => this.props.onLoad(res.data));
-  }
+      .then((res) => props.onLoad(res.data));
+  }, [])
   
-  handleEdit(article) { 
+  const handleEdit = (article) => { 
     /**
-     * this.props.setEdit will
+     * props.setEdit will
      * 1. dispatch 'SET_EDIT' action to home reducer, which will
      * 2. set the articleToEdit home reducer state to this article, which will
      * 3. map the home reducer state.articleToEdit to the Form component props.articleToEdit
      */
-    this.props.setEdit(article);
+    props.setEdit(article)
   }
   
-  async handleDelete(id) { 
+  const handleDelete = async (id) => { 
     /**
-     * this.props.onDelete will
+     * props.onDelete will
      * 1. dispatch 'DELETE_ARTICLE' action to home reducer, which will
      * 2. set the articles home reducer state to all articles except the one with this id
-     * 3. map the home reducer state.articles to this Home component props.articles
+     * 3. map the home reducer state.articles to this Home function's props.articles
      */
     await axios.delete(`http://localhost:8000/api/articles/${id}`);
-    this.props.onDelete(id);
+    props.onDelete(id);
   }
   
-  render() {
     return (
       <div className="container">
         <ArticleFormHeader /> {/* This contains the Form component */}
         <div className="row pt-5">
           <div className="col-12 col-lg-6 offset-lg-3">{
-            this.props.articles.map((article) => {
+            props.articles.map((article) => {
               return <Article key={article._id} 
                               article={article} 
-                              handleDelete={this.handleDelete} 
-                              handleEdit={this.handleEdit} />
+                              handleDelete={handleDelete} 
+                              handleEdit={handleEdit} />
             })
           }</div>
         </div>
       </div>
     );
-  }
 }
 
 /**
@@ -84,7 +71,7 @@ mapStateToProps
   value: the home reducer's state.articles 
 */
 const mapStateToProps = (state) => ({
-  articles: state.home.articles, // maps the home reducer's state.articles to this (Home) component's props.articles
+  articles: state.home.articles, // maps the home reducer's state.articles to Home function's props.articles
 });
 
 /**
@@ -92,7 +79,7 @@ mapDispatchToProps
 @param dispatch Store function that takes an Action (object representing "what changed" with a mandatory 'type' key) and returns part of the home reducer's state
 @param ownProps? optional
 @returns mapping the connected component's prop functions as keys to values of dispatch functions that take Action parameters and return part of the home reducer's state
-  key: this (Home) component's CRUD functions (onLoad, onDelete, setEdit)
+  key: Home function's CRUD functions (onLoad, onDelete, setEdit)
   value: the home reducer's dispatch actions/functions that take Action parameters and return home reducer's state 
 */
 const mapDispatchToProps = (dispatch) => ({ 
