@@ -20,9 +20,8 @@ export const ArticleFormHeader = (props) => {
  *    handleEdit(article)
  *    article
  */
-export class Article extends React.PureComponent {
-  render() {
-    const { article, handleDelete, handleEdit } = this.props;
+export const Article = (props) => {
+    const { article, handleDelete, handleEdit } = props;
     return (
       <div className="card my-3" >
         <div className="card-header">{article.title}</div>
@@ -44,5 +43,4 @@ export class Article extends React.PureComponent {
         </div>
       </div>
     )
-  }
 }
