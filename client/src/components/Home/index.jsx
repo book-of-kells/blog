@@ -74,7 +74,7 @@ const Home = (props) => {
   ) : (
     <div>
       <Link to='/'>Home</Link><br/>
-      {/* <Link to='/login'>Login</Link><br/> */}
+      <Link to='/login'>Login</Link><br/> {/* */}
       <Link to='/protected'>Protected</Link><br/>
       {button}
     </div>

@@ -8,7 +8,6 @@ import errorHandler from 'errorhandler';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
 
-import ArticlesSchema from './models/Articles.js';
 import router from './routes/index.js';
 
 const isProduction = process.env.NODE_ENV === 'production';

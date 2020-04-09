@@ -13,9 +13,10 @@ import '../resources/scss/style.scss';
 ReactDOM.render(
   <Router history={createBrowserHistory()}>
     <Provider store={store}>
-      <Switch>
+      <App />
+      {/*<Switch>
         <Route path="/" component={App} />
-      </Switch>
+      </Switch> */}
     </Provider>
   </Router>,
   document.getElementById('root'),

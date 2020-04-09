@@ -5,7 +5,37 @@ const articlesRouter = express.Router();
 const Articles = mongoose.model('Articles');
 
 
-articlesRouter.post('/', (req, res, next) => {
+const readListCallback = (req, res, next) => {
+  return Articles.find()
+    .sort({ createdAt: 'descending' })
+    .then((articles) => res.json({ articles: articles.map(article => article.toJSON()) }))
+    .catch((next) => {console.log(next)});
+}
+
+const paramCallback = (req, res, next, id) => {
+  return Articles.findById(id, (err, article) => {
+    if(err) {
+      return res.sendStatus(404);
+    } else if(article) {
+      req.article = article;
+      return next();
+    }
+  }).catch(next);
+}
+
+const readOneCallback = (req, res, next) => {
+  return res.json({
+    article: req.article.toJSON(),
+  });
+}
+H
+const deleteCallback = (req, res, next) => {
+  return Articles.findByIdAndRemove(req.article._id)
+    .then(() => res.sendStatus(200))
+    .catch(next);
+}
+
+const createCallback = (req, res, next) => {
   const { body } = req;
 
   if(!body.title) {
@@ -36,33 +66,9 @@ articlesRouter.post('/', (req, res, next) => {
   return finalArticle.save()
     .then(() => res.json({ article: finalArticle.toJSON() }))
     .catch(next);
-});
+}
 
-articlesRouter.get('/', (req, res, next) => {
-  return Articles.find()
-    .sort({ createdAt: 'descending' })
-    .then((articles) => res.json({ articles: articles.map(article => article.toJSON()) }))
-    .catch((next) => {console.log(next)});
-});
-
-articlesRouter.param('id', (req, res, next, id) => {
-  return Articles.findById(id, (err, article) => {
-    if(err) {
-      return res.sendStatus(404);
-    } else if(article) {
-      req.article = article;
-      return next();
-    }
-  }).catch(next);
-});
-
-articlesRouter.get('/:id', (req, res, next) => {
-  return res.json({
-    article: req.article.toJSON(),
-  });
-});
-
-articlesRouter.patch('/:id', (req, res, next) => {
+const updateCallback = (req, res, next) => {
   const { body } = req;
 
   if(typeof body.title !== 'undefined') {
@@ -80,12 +86,13 @@ articlesRouter.patch('/:id', (req, res, next) => {
   return req.article.save()
     .then(() => res.json({ article: req.article.toJSON() }))
     .catch(next);
-});
+}
 
-articlesRouter.delete('/:id', (req, res, next) => {
-  return Articles.findByIdAndRemove(req.article._id)
-    .then(() => res.sendStatus(200))
-    .catch(next);
-});
+articlesRouter.param('id', paramCallback);
+articlesRouter.get('/:id', readOneCallback);
+articlesRouter.delete('/:id', deleteCallback);
+articlesRouter.get('/', readListCallback);
+articlesRouter.post('/', createCallback);
+articlesRouter.patch('/:id', updateCallback);
 
 export default articlesRouter;
