@@ -28,7 +28,7 @@ const readOneCallback = (req, res, next) => {
     article: req.article.toJSON(),
   });
 }
-H
+
 const deleteCallback = (req, res, next) => {
   return Articles.findByIdAndRemove(req.article._id)
     .then(() => res.sendStatus(200))
